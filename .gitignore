@@ -1,0 +1,15 @@
+.DS_Store
+.claude
+
+# Terraform files
+.terraform
+*.tfstate
+*.tfstate.*
+
+# Provisioning logy
+cookiecutter/logs/
+
+.idea/
+
+# Local rendered secrets / cluster-specific credentials
+kubernetes/workload/02-secrets.yaml

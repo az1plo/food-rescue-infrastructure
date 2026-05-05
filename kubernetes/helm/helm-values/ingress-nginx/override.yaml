@@ -1,0 +1,11 @@
+# ingress-nginx — FSA Workshop override values
+# Obsahuje IBA zmeny oproti default values (values-default.yaml).
+controller:
+  service:
+    annotations:
+      service.beta.kubernetes.io/azure-load-balancer-resource-group: "mc_rg-fsa"
+      service.beta.kubernetes.io/azure-pip-name: "pip-fsa"
+    externalTrafficPolicy: "Local"
+
+defaultBackend:
+  enabled: true

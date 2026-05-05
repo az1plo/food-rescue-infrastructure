@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fsa-fe
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fsa-fe
+  template:
+    metadata:
+      labels:
+        app: fsa-fe
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9113"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: fsa-fe
+          image: acrfsamakarevychv.azurecr.io/fsa-frontend:latest
+          imagePullPolicy: Always
+          env:
+            - name: FOOD_RESCUE_GOOGLE_MAPS_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: frontend-runtime-secret
+                  key: google_maps_api_key
+                  optional: true
+          resources:
+            # TODO: nastavit podla metrik podu, toto su len odhadnute hodnoty
+            limits:
+              cpu: 250m
+              memory: 250Mi
+            requests:
+              cpu: 150m
+              memory: 150Mi
+          # livenessProbe:
+          #   httpGet:
+          #     # TODO: zmenit na nejaky validny endpoint
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     # TODO: zmenit na nejaky validny endpoint
+          #     path: /
+          #     port: http
+
+        - name: nginx-exporter
+          image: nginx/nginx-prometheus-exporter:1.3
+          args:
+            - --nginx.scrape-uri=http://localhost:8080/stub_status
+          ports:
+            - name: metrics
+              containerPort: 9113
+          resources:
+            limits:
+              cpu: 50m
+              memory: 32Mi
+            requests:
+              cpu: 10m
+              memory: 16Mi

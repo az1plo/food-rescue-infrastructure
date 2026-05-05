@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fsa-be
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fsa-be
+  template:
+    metadata:
+      labels:
+        app: fsa-be
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: fsa-be
+          image: acrfsamakarevychv.azurecr.io/fsa-backend:latest
+          imagePullPolicy: Always
+          env:
+            # Nacitanie citlivych udajov pre DB z K8s secrets
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: db_url
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: db_username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: db_password
+            - name: FOOD_RESCUE_KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-secret
+                  key: kc_client_secret
+            - name: FOOD_RESCUE_SUPPORT_PROVIDER
+              valueFrom:
+                secretKeyRef:
+                  name: support-openai-secret
+                  key: provider
+                  optional: true
+            - name: FOOD_RESCUE_SUPPORT_OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: support-openai-secret
+                  key: openai_api_key
+                  optional: true
+            - name: FOOD_RESCUE_SUPPORT_OPENAI_MODEL
+              valueFrom:
+                secretKeyRef:
+                  name: support-openai-secret
+                  key: openai_model
+                  optional: true
+            - name: FOOD_RESCUE_SUPPORT_OPENAI_PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: support-openai-secret
+                  key: openai_project_id
+                  optional: true
+            - name: FOOD_RESCUE_SUPPORT_OPENAI_ORGANIZATION_ID
+              valueFrom:
+                secretKeyRef:
+                  name: support-openai-secret
+                  key: openai_organization_id
+                  optional: true
+            - name: FOOD_RESCUE_KEYCLOAK_BASE_URL
+              value: https://app.68.219.101.242.nip.io/auth
+            - name: ISSUER_URI
+              value: https://app.68.219.101.242.nip.io/auth/realms/FSA
+            - name: JWT_URI
+              value: https://app.68.219.101.242.nip.io/auth/realms/FSA/protocol/openid-connect/certs
+            # Override casti Spring Boot konfiguracie kvoli citlivym udajom
+            - name: JAVA_OPTS
+              value: >-
+                -Dspring.datasource.url=jdbc:postgresql://${DB_URL}:5432/fsa-db
+                -Dspring.datasource.username=${DB_USERNAME}
+                -Dspring.datasource.password=${DB_PASSWORD}
+                -Dspring.security.oauth2.resourceserver.jwt.issuer-uri=${ISSUER_URI}
+                -Dspring.security.oauth2.resourceserver.jwt.jwk-uri=${JWT_URI}
+          resources:
+            # TODO: nastavit podla metrik podu, toto su len odhadnute hodnoty
+            limits:
+              cpu: 500m
+              memory: 500Mi
+            requests:
+              cpu: 100m
+              memory: 250Mi
+          ports:
+            - name: http
+              containerPort: 8080
+          # FSA mozete nechat zakomentovane, kedze nemate implementovane health checky - sluzi iba ako ukazka
+          # livenessProbe:
+          #   initialDelaySeconds: 60
+          #   periodSeconds: 10
+          #   timeoutSeconds: 5
+          #   successThreshold: 1
+          #   failureThreshold: 5
+          #   httpGet:
+          #     path: /actuator/health
+          #     port: http
+          # readinessProbe:
+          #   initialDelaySeconds: 60
+          #   periodSeconds: 10
+          #   timeoutSeconds: 5
+          #   successThreshold: 1
+          #   failureThreshold: 5
+          #   httpGet:
+          #     path: /actuator/health
+          #     port: http
