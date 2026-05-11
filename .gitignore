@@ -13,3 +13,5 @@ cookiecutter/logs/
 
 # Local rendered secrets / cluster-specific credentials
 kubernetes/workload/02-secrets.yaml
+
+docs/
