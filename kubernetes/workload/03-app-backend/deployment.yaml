@@ -73,6 +73,66 @@ spec:
                   name: support-openai-secret
                   key: openai_organization_id
                   optional: true
+            - name: FOOD_RESCUE_OFFER_ASSISTANT_PROVIDER
+              valueFrom:
+                secretKeyRef:
+                  name: offer-assistant-openai-secret
+                  key: provider
+                  optional: true
+            - name: FOOD_RESCUE_OFFER_ASSISTANT_OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: offer-assistant-openai-secret
+                  key: openai_api_key
+                  optional: true
+            - name: FOOD_RESCUE_OFFER_ASSISTANT_OPENAI_DRAFT_MODEL
+              valueFrom:
+                secretKeyRef:
+                  name: offer-assistant-openai-secret
+                  key: openai_draft_model
+                  optional: true
+            - name: FOOD_RESCUE_OFFER_ASSISTANT_OPENAI_IMAGE_MODEL
+              valueFrom:
+                secretKeyRef:
+                  name: offer-assistant-openai-secret
+                  key: openai_image_model
+                  optional: true
+            - name: FOOD_RESCUE_OFFER_ASSISTANT_OPENAI_PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: offer-assistant-openai-secret
+                  key: openai_project_id
+                  optional: true
+            - name: FOOD_RESCUE_OFFER_ASSISTANT_OPENAI_ORGANIZATION_ID
+              valueFrom:
+                secretKeyRef:
+                  name: offer-assistant-openai-secret
+                  key: openai_organization_id
+                  optional: true
+            - name: FOOD_RESCUE_OFFER_MEDIA_PROVIDER
+              valueFrom:
+                secretKeyRef:
+                  name: offer-media-azure-secret
+                  key: provider
+                  optional: true
+            - name: FOOD_RESCUE_OFFER_MEDIA_AZURE_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: offer-media-azure-secret
+                  key: connection_string
+                  optional: true
+            - name: FOOD_RESCUE_OFFER_MEDIA_AZURE_BUSINESS_ICONS_CONTAINER
+              valueFrom:
+                secretKeyRef:
+                  name: offer-media-azure-secret
+                  key: business_icons_container
+                  optional: true
+            - name: FOOD_RESCUE_OFFER_MEDIA_AZURE_OFFER_IMAGES_CONTAINER
+              valueFrom:
+                secretKeyRef:
+                  name: offer-media-azure-secret
+                  key: offer_images_container
+                  optional: true
             - name: FOOD_RESCUE_KEYCLOAK_BASE_URL
               value: https://app.68.219.101.242.nip.io/auth
             - name: ISSUER_URI
