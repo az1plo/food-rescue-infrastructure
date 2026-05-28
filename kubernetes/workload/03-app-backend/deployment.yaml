@@ -148,13 +148,12 @@ spec:
                 -Dspring.security.oauth2.resourceserver.jwt.issuer-uri=${ISSUER_URI}
                 -Dspring.security.oauth2.resourceserver.jwt.jwk-uri=${JWT_URI}
           resources:
-            # TODO: nastavit podla metrik podu, toto su len odhadnute hodnoty
             limits:
-              cpu: 500m
-              memory: 500Mi
+              cpu: 750m
+              memory: 768Mi
             requests:
-              cpu: 100m
-              memory: 250Mi
+              cpu: 200m
+              memory: 384Mi
           ports:
             - name: http
               containerPort: 8080
